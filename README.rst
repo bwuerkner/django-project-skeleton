@@ -22,10 +22,12 @@ Version:
     1.3
 
 Django Version:
-    1.9, 1.10, 1.11, 2.0
+    1.9, 1.10, 1.11, 2.0, 2.1, 2.2b1
 
 Python Version:
-    2.7, 3.5 (tested); 3.4, 3.6 (assumed)
+    2.7 (official support ending with 2019), 
+    3.4 (official support ending March 2019), 
+    3.5, 3.6, 3.7
 
 
 
