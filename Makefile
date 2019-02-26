@@ -3,7 +3,7 @@ PYTHONPATH := $(LOCALPATH)/
 PYTHON_BIN := $(VIRTUAL_ENV)/bin
 
 DJANGO_TEST_SETTINGS_FILE := development
-DJANGO_TEST_SETTINGS := {{ project_name }}.settings.$(DJANGO_TEST_SETTINGS_FILE)
+DJANGO_TEST_SETTINGS := myDevelopmentProject.settings.$(DJANGO_TEST_SETTINGS_FILE)
 DJANGO_TEST_POSTFIX := --settings=$(DJANGO_TEST_SETTINGS) --pythonpath=$(PYTHONPATH)
 
 
@@ -31,6 +31,9 @@ all:
 	@echo "  test/dev     Runs the tests with development settings"
 	@echo "  test/prod    Runs the tests with production settings"
 	@echo "  update/dev   Shortcut for setup and refresh"
+	@echo "  prepare_for_development Replaces all template placeholders with"
+	@echo "                 a temporary string so that django can be executed"
+	@echo "  prepare_for_commit   Returns all placeholders to their origins"
 
 
 # performs the tests and measures code coverage
@@ -106,3 +109,18 @@ refresh/prod:
 	$(MAKE) refresh DJANGO_TEST_SETTINGS_FILE=production
 
 update/dev: setup/dev refresh/dev
+
+# Renames all shortcuts and the folder to enable everything to run
+prepare_for_development: 
+	@find configs -type f -exec sed -i 's/{{ project_name }}/myDevelopmentProject/g' {} +
+	@find project_name -type f -exec sed -i 's/{{ project_name }}/myDevelopmentProject/g' {} +
+	@sed -i 's/{{ project_name }}/myDevelopmentProject/g' manage.py
+	@mv project_name myDevelopmentProject
+
+# Place all shortcuts again in the project so it is ready to be comitted
+prepare_for_commit:
+	@mv myDevelopmentProject project_name
+	@find configs -type f -exec sed -i 's/myDevelopmentProject/{{ project_name }}/g' {} +
+	@find project_name -type f -exec sed -i 's/myDevelopmentProject/{{ project_name }}/g' {} +
+	@sed -i 's/myDevelopmentProject/{{ project_name }}/g' manage.py
+	
